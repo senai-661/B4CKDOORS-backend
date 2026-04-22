@@ -1,15 +1,12 @@
-import { server } from "./server.js"; // importa o servidor HTTP
-import { DatabaseModel } from "./model/DatabaseModel.js";
+import express from "express";
+import cors from "cors";
+import router from "./routes.js"; // Importe como default para evitar erros
 
-const port: number = 3333; // define a porta que o servidor vai executar
+const app = express();
 
-// liga o servidor HTTP
-new DatabaseModel().testarConexao().then((resbd: boolean) => {
-    if (resbd) {
-        server.listen(port, () => {
-            console.log(`🚀 Servidor rodando em http://localhost:${port}`);
-        });
-    } else {
-        console.log("❌ Não foi possível conectar ao banco de dados");
-    }
-});
+app.use(cors());
+app.use(express.json());
+app.use(router);
+
+// EXPORTAÇÃO DEFAULT (MUITO IMPORTANTE)
+export default app;
