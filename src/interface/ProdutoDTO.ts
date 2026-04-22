@@ -6,4 +6,7 @@ export interface ProdutoDTO {
     preco: number;
     estoque: number;
     idCategoria: number;
+    imagem ?: string;
+    id_categoria?: number;
+    created_at?: Date;
 }

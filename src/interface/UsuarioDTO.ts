@@ -4,4 +4,5 @@ export interface UsuarioDTO {
     email: string;
     cpf: string;        // ← adiciona essa linha
     senha: string;
+    created_at?: Date;
 }
