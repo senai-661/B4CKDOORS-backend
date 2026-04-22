@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { Router } from "express";
 
+import { Auth } from "./middleware/Auth.js";
+
 import UsuarioController   from "./controller/UsuarioController.js";
 import CategoriaController from "./controller/CategoriaController.js";
 import ProdutoController   from "./controller/ProdutoController.js";
@@ -13,39 +15,44 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 /**
+ * Rota pública — Login
+ */
+router.post("/api/login", Auth.validacaoUsuario);
+
+/**
  * Endpoints para Usuários
  */
-router.get("/api/usuarios",              UsuarioController.todos);
-router.get("/api/usuarios/:idUsuario",   UsuarioController.usuario);
-router.post("/api/usuarios",             UsuarioController.novo);
-router.put("/api/usuarios/:idUsuario",   UsuarioController.atualizar);
-router.delete("/api/usuarios/:idUsuario", UsuarioController.remover);
+router.get   ("/api/usuarios",               Auth.verifyToken, UsuarioController.todos);
+router.get   ("/api/usuarios/:idUsuario",    Auth.verifyToken, UsuarioController.usuario);
+router.post  ("/api/usuarios",               UsuarioController.novo);       // cadastro é público
+router.put   ("/api/usuarios/:idUsuario",    Auth.verifyToken, UsuarioController.atualizar);
+router.delete("/api/usuarios/:idUsuario",    Auth.verifyToken, UsuarioController.remover);
 
 /**
  * Endpoints para Categorias
  */
-router.get("/api/categorias",                 CategoriaController.todos);
-router.get("/api/categorias/:idCategoria",    CategoriaController.categoria);
-router.post("/api/categorias",                CategoriaController.novo);
-router.put("/api/categorias/:idCategoria",    CategoriaController.atualizar);
-router.delete("/api/categorias/:idCategoria", CategoriaController.remover);
+router.get   ("/api/categorias",              Auth.verifyToken, CategoriaController.todos);
+router.get   ("/api/categorias/:idCategoria", Auth.verifyToken, CategoriaController.categoria);
+router.post  ("/api/categorias",              Auth.verifyToken, CategoriaController.novo);
+router.put   ("/api/categorias/:idCategoria", Auth.verifyToken, CategoriaController.atualizar);
+router.delete("/api/categorias/:idCategoria", Auth.verifyToken, CategoriaController.remover);
 
 /**
  * Endpoints para Produtos
  */
-router.get("/api/produtos",              ProdutoController.todos);
-router.get("/api/produtos/:idProduto",   ProdutoController.produto);
-router.post("/api/produtos",             ProdutoController.novo);
-router.put("/api/produtos/:idProduto",   ProdutoController.atualizar);
-router.delete("/api/produtos/:idProduto", ProdutoController.remover);
+router.get   ("/api/produtos",              Auth.verifyToken, ProdutoController.todos);
+router.get   ("/api/produtos/:idProduto",   Auth.verifyToken, ProdutoController.produto);
+router.post  ("/api/produtos",              Auth.verifyToken, ProdutoController.novo);
+router.put   ("/api/produtos/:idProduto",   Auth.verifyToken, ProdutoController.atualizar);
+router.delete("/api/produtos/:idProduto",   Auth.verifyToken, ProdutoController.remover);
 
 /**
  * Endpoints para Pedidos
  */
-router.get("/api/pedidos",             PedidoController.todos);
-router.get("/api/pedidos/:idPedido",   PedidoController.pedido);
-router.post("/api/pedidos",            PedidoController.novo);
-router.put("/api/pedidos/:idPedido",   PedidoController.atualizar);
-router.delete("/api/pedidos/:idPedido", PedidoController.remover);
+router.get   ("/api/pedidos",            Auth.verifyToken, PedidoController.todos);
+router.get   ("/api/pedidos/:idPedido",  Auth.verifyToken, PedidoController.pedido);
+router.post  ("/api/pedidos",            Auth.verifyToken, PedidoController.novo);
+router.put   ("/api/pedidos/:idPedido",  Auth.verifyToken, PedidoController.atualizar);
+router.delete("/api/pedidos/:idPedido",  Auth.verifyToken, PedidoController.remover);
 
 export { router };
