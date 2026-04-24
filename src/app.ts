@@ -1,12 +1,30 @@
-import express from "express";
-import cors from "cors";
-import router from "./routes.js"; // Importe como default para evitar erros
+import "dotenv/config";
+import { DatabaseModel } from "./model/DatabaseModel.js";
+import { server } from "./server.js";
 
-const app = express();
+const port: number = Number(process.env.PORT) || 3333;
+const host: string = process.env.HOST ?? "localhost";
 
-app.use(cors());
-app.use(express.json());
-app.use(router);
+const startServer = async () => {
+    try {
+        console.info('🚀 B4CKDOORS: Testando conexão com o banco...');
+        const dbModel = new DatabaseModel();
+        
+        // Verifica se o método no seu DatabaseModel chama 'testarConexao' ou 'testeConexao'
+        const ok = await dbModel.testarConexao();
 
-// EXPORTAÇÃO DEFAULT (MUITO IMPORTANTE)
-export default app;
+        if (ok) {
+            server.listen(port, () => {
+                console.info(`✅ Servidor online: http://${host}:${port}`);
+            });
+        } else {
+            console.error(`❌ Erro: Banco de dados inacessível. Verifique o .env`);
+            process.exit(1); 
+        }
+    } catch (error) {
+        console.error(`💥 Erro fatal ao iniciar o servidor:`, error);
+        process.exit(1);
+    }
+};
+
+startServer();
