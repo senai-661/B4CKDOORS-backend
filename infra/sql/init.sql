@@ -145,12 +145,10 @@ INSERT INTO usuarios (nome, email, cpf, senha) VALUES
 INSERT INTO categorias (nome) VALUES
 ('Futebol'),
 ('Basquete'),
-('Corrida'),
 ('Masculino'),
-('Feminino'),
-('Infantil'),
+('Mulheres'),
+('Crianças'),
 ('Calçados'),
-('Acessórios'),
 ('Suplementos'),
 ('Promoções');
 
