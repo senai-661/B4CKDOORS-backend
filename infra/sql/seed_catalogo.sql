@@ -1,0 +1,42 @@
+-- NÃO altera o init.sql. Execute depois do init.sql.
+-- Evita duplicar produtos pelo nome.
+INSERT INTO produtos (nome, descricao, preco, estoque, id_categoria)
+SELECT * FROM (VALUES
+('Camisa Flamengo 25/26','Camisa de futebol para torcedor.',299.90,30,1),
+('Camisa Santos Retrô 2011','Camisa retrô inspirada na temporada 2011.',279.90,22,1),
+('Camisa Seleção Brasil 2026','Camisa da Seleção Brasileira.',349.90,35,1),
+('Bola Penalty S11 Campo','Bola de campo para treinos e partidas.',169.90,40,1),
+('Chuteira Nike Mercurial Club','Chuteira para velocidade e controle.',399.90,28,6),
+('Chuteira Adidas Predator League','Chuteira para controle e precisão.',449.90,25,6),
+('Regata Chicago Bulls Icon','Regata inspirada na NBA.',449.90,20,2),
+('Regata Golden State Warriors','Regata inspirada na NBA.',449.90,20,2),
+('Bola de Basquete Spalding TF','Bola de basquete tamanho 7.',199.90,30,2),
+('Tênis Nike Revolution 7','Tênis leve para corrida e caminhada.',329.90,42,6),
+('Tênis Adidas Duramo SL','Tênis para corrida e treinos.',379.90,38,6),
+('Tênis Olympikus Corre 4','Tênis nacional de performance para corrida.',499.90,35,6),
+('Tênis Asics Gel Excite 11','Tênis com amortecimento para corrida.',429.90,32,6),
+('Tênis Mizuno Wave Mirai 7','Tênis com tecnologia Wave.',399.90,29,6),
+('Tênis New Balance 520 V9','Tênis versátil para corrida.',389.90,31,6),
+('Legging Adidas Essentials','Legging feminina para academia.',179.90,30,4),
+('Top Nike Swoosh','Top esportivo feminino.',159.90,28,4),
+('Camiseta Under Armour Tech','Camiseta masculina para treino.',149.90,45,3),
+('Luva Academia Adidas Essential','Luva para musculação.',99.90,36,9),
+('Tapete Yoga 6mm GRENÁ','Tapete para yoga e pilates.',119.90,25,9),
+('Mochila Nike Brasilia','Mochila esportiva 24 litros.',249.90,30,9),
+('Boné Adidas Aeroready','Boné leve para treino e corrida.',129.90,38,9),
+('Squeeze Puma 750ml','Garrafa esportiva de 750ml.',79.90,50,9),
+('Mala Nike Academy Team','Mala esportiva para futebol e academia.',269.90,24,9),
+('Tênis Infantil Nike Star Runner','Tênis infantil confortável.',279.90,30,5),
+('Chuteira Infantil Umbro Class','Chuteira infantil para futebol.',199.90,28,5),
+('Conjunto Infantil Adidas Essentials','Conjunto esportivo infantil.',219.90,25,5),
+('Mochila Infantil Puma Phase','Mochila infantil esportiva.',149.90,30,5),
+('Whey Protein 900g Chocolate','Suplemento proteico sabor chocolate.',139.90,40,7),
+('Creatina Monohidratada 250g','Creatina monohidratada em pó.',89.90,45,7),
+('Barra Proteica Cookies','Barra proteica sabor cookies.',12.90,100,7),
+('Pré-Treino Hórus 300g','Suplemento pré-treino.',119.90,35,7),
+('Moletom Nike Club Fleece','Moletom masculino casual.',349.90,25,3),
+('Jaqueta Adidas Tiro','Jaqueta esportiva unissex.',329.90,24,3),
+('Bermuda Puma Essentials','Bermuda masculina casual.',159.90,32,3),
+('Camiseta New Balance Sport Essentials','Camiseta esportiva unissex.',139.90,40,8)
+) AS novo(nome,descricao,preco,estoque,id_categoria)
+WHERE NOT EXISTS (SELECT 1 FROM produtos p WHERE lower(p.nome)=lower(novo.nome));
