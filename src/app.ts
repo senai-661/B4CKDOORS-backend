@@ -1,29 +1,14 @@
-import "dotenv/config";
-import DatabaseModel from "./model/DatabaseModel.js";
-import { server } from "./server.js";
+// src/app.ts
+import express, { Application } from 'express';
+import cors from 'cors';
+import routes from './routes/index';
+import { errorHandler } from './middlewares/errorHandler';
 
-const port: number = Number(process.env.PORT) || 3333;
-const host: string = process.env.HOST ?? "localhost";
+const app: Application = express();
 
-const startServer = async () => {
-    try {
-        console.info("🔌 BACKDOORS: Testando conexão com o banco...");
-        const dbModel = new DatabaseModel();
+app.use(cors());
+app.use(express.json());
+app.use('/api', routes);
+app.use(errorHandler);
 
-        const ok = await dbModel.testarConexao();
-
-        if (ok) {
-            server.listen(port, () => {
-                console.info(`🟢 Servidor online: http://${host}:${port}`);
-            });
-        } else {
-            console.error("❌ Erro: Banco de dados inacessível. Verifique o .env");
-            process.exit(1);
-        }
-    } catch (error) {
-        console.error("💀 Erro fatal ao iniciar o servidor:", error);
-        process.exit(1);
-    }
-};
-
-startServer();
+export default app;

@@ -1,20 +1,9 @@
-import express, { type Request, type Response, type NextFunction } from "express";
-import cors from "cors";
-import { router } from "./routes.js";
-import { errorMiddleware } from "./middleware/ErrorMiddleware.js";
+// src/server.ts
+import 'dotenv/config';
+import app from './app';
 
-const server = express();
+const PORT = process.env.PORT || 3000;
 
-server.use(cors());
-server.use(express.json());
-server.use(router);
-
-// Middleware 404
-server.use((req: Request, res: Response) => {
-    res.status(404).json({ erro: "Rota não encontrada" });
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-// Middleware de erro global — deve ser o último
-server.use(errorMiddleware as any);
-
-export { server };
