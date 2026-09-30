@@ -1,0 +1,17 @@
+import { Link, useNavigate } from 'react-router-dom'
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react'
+import { useStore } from '../context/StoreContext'
+const money = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+export default function Cart() {
+  const { cart, cartTotal, updateQuantity, removeFromCart } = useStore()
+  const navigate = useNavigate()
+  const shipping = cartTotal >= 299 || cartTotal === 0 ? 0 : 19.90
+  return <div className="cart-page">
+    <div className="breadcrumbs"><Link to="/">Início</Link><span>/</span><span>Carrinho</span></div>
+    <div className="page-title"><span className="section-kicker">QUASE LÁ</span><h1>Meu carrinho <span>({cart.reduce((s, i) => s + i.quantity, 0)} itens)</span></h1></div>
+    {!cart.length ? <div className="empty-cart"><div className="empty-cart-icon"><ShoppingBag size={34} /></div><h2>Seu carrinho está esperando por você</h2><p>Explore nossos produtos e encontre seu próximo favorito.</p><Link to="/" className="button button-primary">CONTINUAR COMPRANDO <ArrowRight size={16} /></Link></div> :
+      <div className="cart-layout"><section className="cart-items"><div className="cart-items-heading"><strong>Produto</strong><span>Preço</span></div>{cart.map(item => <article className="cart-item" key={`${item.product.id}-${item.size}`}><Link to={`/produto/${item.product.id}`} className="cart-item-image"><img src={item.product.image} alt={item.product.name} /></Link><div className="cart-item-details"><Link to={`/produto/${item.product.id}`}><strong>{item.product.name}</strong></Link><span>Tamanho: {item.size}</span><button className="remove-item" onClick={() => removeFromCart(item.product.id, item.size)}><Trash2 size={14} /> Remover</button></div><div className="cart-item-price"><strong>{money(item.product.price * item.quantity)}</strong><small>{money(item.product.price)} / un.</small><div className="quantity-control"><button onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)} aria-label="Diminuir"><Minus size={13} /></button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)} aria-label="Aumentar"><Plus size={13} /></button></div></div></article>)}<Link to="/" className="continue-link">← Continuar comprando</Link></section>
+      <aside className="order-summary"><h2>Resumo do pedido</h2><div className="summary-line"><span>Subtotal</span><span>{money(cartTotal)}</span></div><div className="summary-line"><span>Frete</span><span>{shipping === 0 ? <b className="free-shipping">Grátis</b> : money(shipping)}</span></div>{cartTotal < 299 && <div className="shipping-hint">Faltam {money(299 - cartTotal)} para ganhar frete grátis.</div>}<div className="summary-total"><span>Total</span><strong>{money(cartTotal + shipping)}</strong></div><small className="summary-installment">ou até 4x de {money((cartTotal + shipping) / 4)} sem juros</small><button className="button button-primary checkout-button" onClick={() => navigate('/checkout')}>FINALIZAR COMPRA <ArrowRight size={17} /></button><div className="secure-note"><ShieldCheck size={16} /> Ambiente de demonstração seguro</div></aside></div>
+    }
+  </div>
+}
