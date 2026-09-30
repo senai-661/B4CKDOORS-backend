@@ -1,0 +1,8 @@
+import { Link } from 'react-router-dom'
+import { PackageCheck, ArrowRight } from 'lucide-react'
+import { useStore } from '../context/StoreContext'
+const money = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+export default function Orders() {
+  const { orders, customer } = useStore()
+  return <div className="orders-page"><div className="breadcrumbs"><Link to="/">Início</Link><span>/</span><span>Meus pedidos</span></div><div className="page-title"><span className="section-kicker">ACOMPANHE SUA COMPRA</span><h1>Meus pedidos</h1></div>{!customer && <div className="notice-box">Você está vendo os pedidos salvos neste navegador. <Link to="/login">Entre na sua conta</Link> para continuar.</div>}{orders.length ? <div className="orders-list">{orders.map(order => <article className="order-card" key={order.id}><div className="order-card-top"><div><small>NÚMERO DO PEDIDO</small><strong>{order.id}</strong></div><div><small>DATA</small><strong>{order.date}</strong></div><div><small>VALOR</small><strong>{money(order.total)}</strong></div><span className="order-status">{order.status}</span></div><div className="order-card-bottom"><span>{order.items.reduce((sum, item) => sum + item.quantity, 0)} item(ns)</span><span>Pagamento de demonstração</span><PackageCheck size={18} /></div></article>)}</div> : <div className="empty-cart"><div className="empty-cart-icon"><PackageCheck size={34} /></div><h2>Nenhum pedido por aqui</h2><p>Quando você concluir uma compra, ela aparecerá nesta página.</p><Link to="/" className="button button-primary">COMEÇAR A COMPRAR <ArrowRight size={16} /></Link></div>}</div>
+}

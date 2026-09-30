@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8f8f8"/><stop offset="1" stop-color="#e6e8eb"/></linearGradient><linearGradient id="shoe" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#24272b"/><stop offset="1" stop-color="#24272b" stop-opacity=".85"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="9" stdDeviation="8" flood-opacity=".18"/></filter></defs>
+    <rect width="400" height="400" fill="url(#bg)"/><ellipse cx="205" cy="310" rx="150" ry="13" fill="#000" opacity=".1"/>
+    <g filter="url(#s)">
+      <path d="M58 250 Q85 248 107 220 L142 165 Q151 154 163 170 L202 219 Q226 239 271 245 L335 258 Q354 264 357 282 L355 300 Q350 311 330 311 L80 311 Q51 308 49 289 L48 266 Q49 255 58 250Z" fill="url(#shoe)" stroke="#c7c9cc" stroke-width="3"/>
+      <path d="M51 282 Q148 297 355 281 L355 300 Q350 311 330 311 L80 311 Q51 308 49 289Z" fill="#fff" stroke="#c6c6c6" stroke-width="2"/>
+      <path d="M125 214 L178 236 M135 199 L190 225 M146 185 L202 215" stroke="#8e1928" stroke-width="7" stroke-linecap="round"/>
+      <path d="M208 229 Q248 246 289 251" stroke="#777" stroke-opacity=".45" stroke-width="3" fill="none"/>
+      <path d="M72 264 Q130 270 175 263" stroke="#fff" stroke-opacity=".65" stroke-width="3" fill="none"/>
+      <path d="M120 285 l-7 18 h15 l-2-18" fill="#252525"/><path d="M170 285 l-7 18 h15 l-2-18" fill="#252525"/><path d="M220 285 l-7 18 h15 l-2-18" fill="#252525"/><path d="M270 285 l-7 18 h15 l-2-18" fill="#252525"/><path d="M320 285 l-7 18 h15 l-2-18" fill="#252525"/>
+      <text x="265" y="276" font-family="Arial, sans-serif" font-size="12" font-weight="800" text-anchor="middle" fill="#8e1928">GRENÁ</text>
+    </g></svg>
