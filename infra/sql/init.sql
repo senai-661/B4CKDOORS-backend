@@ -1,6 +1,10 @@
 -- ============================================================
 --  GRENA-API  |  init.sql
 --  Sprint 04  |  DDL + DML + Triggers
+--  Revisão: coluna `role`, senhas com hash bcrypt e usuário admin padrão
+--
+--  ATENÇÃO: este script APAGA e recria todas as tabelas (DROP ... CASCADE).
+--  Use apenas em ambiente de desenvolvimento ou na primeira implantação.
 -- ============================================================
 
 -- ─── LIMPEZA ────────────────────────────────────────────────
@@ -35,7 +39,9 @@ CREATE TABLE usuarios (
     nome        VARCHAR(100)    NOT NULL,
     email       VARCHAR(150)    UNIQUE NOT NULL,
     cpf         VARCHAR(14)     UNIQUE NOT NULL,
-    senha       VARCHAR(255)    NOT NULL,
+    senha       VARCHAR(255)    NOT NULL,            -- hash bcrypt (nunca texto puro)
+    role        VARCHAR(20)     NOT NULL DEFAULT 'cliente'
+                CHECK (role IN ('admin', 'cliente')),
     created_at  TIMESTAMP       DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -129,17 +135,24 @@ CREATE TRIGGER trigger_cod_pedido
 -- ============================================================
 
 -- USUARIOS
-INSERT INTO usuarios (nome, email, cpf, senha) VALUES
-('João Silva',       'joao.silva@email.com',       '111.111.111-11', 'hash_123456'),
-('Maria Oliveira',   'maria.oliveira@email.com',   '222.222.222-22', 'hash_123456'),
-('Pedro Santos',     'pedro.santos@email.com',     '333.333.333-33', 'hash_123456'),
-('Lucas Almeida',    'lucas.almeida@email.com',    '444.444.444-44', 'hash_123456'),
-('Ana Costa',        'ana.costa@email.com',         '555.555.555-55', 'hash_123456'),
-('Fernanda Lima',    'fernanda.lima@email.com',    '666.666.666-66', 'hash_123456'),
-('Rafael Souza',     'rafael.souza@email.com',     '777.777.777-77', 'hash_123456'),
-('Camila Rocha',     'camila.rocha@email.com',     '888.888.888-88', 'hash_123456'),
-('Bruno Martins',    'bruno.martins@email.com',    '999.999.999-99', 'hash_123456'),
-('Juliana Ferreira', 'juliana.ferreira@email.com', '000.000.000-00', 'hash_123456');
+-- Clientes de demonstração. Senha de todos: cliente123  (hash bcrypt, 10 rounds)
+INSERT INTO usuarios (nome, email, cpf, senha, role) VALUES
+('João Silva',       'joao.silva@email.com',       '111.111.111-11', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Maria Oliveira',   'maria.oliveira@email.com',   '222.222.222-22', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Pedro Santos',     'pedro.santos@email.com',     '333.333.333-33', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Lucas Almeida',    'lucas.almeida@email.com',    '444.444.444-44', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Ana Costa',        'ana.costa@email.com',         '555.555.555-55', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Fernanda Lima',    'fernanda.lima@email.com',    '666.666.666-66', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Rafael Souza',     'rafael.souza@email.com',     '777.777.777-77', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Camila Rocha',     'camila.rocha@email.com',     '888.888.888-88', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Bruno Martins',    'bruno.martins@email.com',    '999.999.999-99', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente'),
+('Juliana Ferreira', 'juliana.ferreira@email.com', '000.000.000-00', '$2b$10$0z5YywAo.efa26i7IadKF.xAeCffYe/nYtAEjL2HBIqbubIXRQsn2', 'cliente');
+
+-- Administrador padrão.  E-mail: admin@grena.com   Senha inicial: admin123
+-- TROQUE ESTA SENHA ANTES DE PUBLICAR EM PRODUÇÃO (veja "npm run hash" no README).
+INSERT INTO usuarios (nome, email, cpf, senha, role) VALUES
+('Administrador Grená', 'admin@grena.com', '123.456.789-09',
+ '$2b$10$23rGPbRk5LjZpuY6p6fDEupsm0jON6E3yFD0VTDajxn6c8flMO/4.', 'admin');
 
 -- CATEGORIAS
 INSERT INTO categorias (nome) VALUES

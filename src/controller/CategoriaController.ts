@@ -1,64 +1,55 @@
 // src/controller/CategoriaController.ts
 import type { Request, Response } from "express";
 import { Categoria } from "../model/Categoria.js";
-import type { CategoriaDTO } from "../interface/CategoriaDTO.js";
+import { HttpError, tratarErro } from "../utils/HttpError.js";
+import * as v from "../utils/validacao.js";
 
 class CategoriaController {
-
     static async todos(req: Request, res: Response): Promise<Response> {
         try {
-            const lista = await Categoria.listarCategorias();
-            if (lista === null) return res.status(500).json({ mensagem: "Erro ao listar categorias." });
-            return res.status(200).json(lista);
+            return res.status(200).json(await Categoria.listarCategorias());
         } catch (error) {
-            return res.status(500).json({ mensagem: "Erro interno ao listar categorias." });
+            return tratarErro(res, error, "Erro ao listar categorias");
         }
     }
 
     static async categoria(req: Request, res: Response): Promise<Response> {
         try {
-            const { idCategoria } = req.params;
-            const categoria = await Categoria.buscarCategoria(Number(idCategoria));
-            if (!categoria) return res.status(404).json({ mensagem: "Categoria não encontrada." });
+            const categoria = await Categoria.buscarCategoria(v.idDaRota(req, "idCategoria"));
+            if (!categoria) throw new HttpError(404, "Categoria não encontrada.");
             return res.status(200).json(categoria);
         } catch (error) {
-            return res.status(500).json({ mensagem: "Erro interno ao buscar categoria." });
+            return tratarErro(res, error, "Erro ao buscar categoria");
         }
     }
 
     static async novo(req: Request, res: Response): Promise<Response> {
         try {
-            const dados: CategoriaDTO = req.body;
-            if (!dados.nome) return res.status(400).json({ mensagem: "O campo nome é obrigatório." });
-            const sucesso = await Categoria.cadastrarCategoria(dados);
-            if (sucesso) return res.status(201).json({ mensagem: "Categoria cadastrada com sucesso." });
-            return res.status(400).json({ mensagem: "Erro ao cadastrar categoria." });
+            const categoria = await Categoria.cadastrarCategoria(v.texto(v.corpo(req).nome, "nome", 100));
+            return res.status(201).json({ mensagem: "Categoria cadastrada com sucesso.", categoria });
         } catch (error) {
-            return res.status(500).json({ mensagem: "Erro interno ao cadastrar categoria." });
+            return tratarErro(res, error, "Erro ao cadastrar categoria");
         }
     }
 
     static async atualizar(req: Request, res: Response): Promise<Response> {
         try {
-            const { idCategoria } = req.params;
-            const dados: CategoriaDTO = req.body;
-            if (!dados.nome) return res.status(400).json({ mensagem: "O campo nome é obrigatório." });
-            const sucesso = await Categoria.atualizarCategoria(Number(idCategoria), dados);
-            if (sucesso) return res.status(200).json({ mensagem: "Categoria atualizada com sucesso." });
-            return res.status(404).json({ mensagem: "Categoria não encontrada." });
+            const id = v.idDaRota(req, "idCategoria");
+            const categoria = await Categoria.atualizarCategoria(id, v.texto(v.corpo(req).nome, "nome", 100));
+            if (!categoria) throw new HttpError(404, "Categoria não encontrada.");
+            return res.status(200).json({ mensagem: "Categoria atualizada com sucesso.", categoria });
         } catch (error) {
-            return res.status(500).json({ mensagem: "Erro interno ao atualizar categoria." });
+            return tratarErro(res, error, "Erro ao atualizar categoria");
         }
     }
 
     static async remover(req: Request, res: Response): Promise<Response> {
         try {
-            const { idCategoria } = req.params;
-            const sucesso = await Categoria.removerCategoria(Number(idCategoria));
-            if (sucesso) return res.status(200).json({ mensagem: "Categoria removida com sucesso." });
-            return res.status(404).json({ mensagem: "Categoria não encontrada." });
+            const removida = await Categoria.removerCategoria(v.idDaRota(req, "idCategoria"));
+            if (!removida) throw new HttpError(404, "Categoria não encontrada.");
+            return res.status(200).json({ mensagem: "Categoria removida com sucesso." });
         } catch (error) {
-            return res.status(500).json({ mensagem: "Erro interno ao remover categoria." });
+            return tratarErro(res, error, "Erro ao remover categoria");
         }
     }
 }

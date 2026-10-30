@@ -1,3 +1,5 @@
+import type { ItemPedidoDTO } from "./ItemPedidoDTO.js";
+
 export interface PedidoDTO {
     idPedido?: number;
     codPedido?: string;
@@ -5,4 +7,5 @@ export interface PedidoDTO {
     dataPedido?: string;
     valorTotal: number;
     status?: string;
+    itens?: ItemPedidoDTO[];
 }
