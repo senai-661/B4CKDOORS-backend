@@ -1,4 +1,3 @@
-// src/model/DatabaseModel.ts
 import pkg from "pg";
 import dotenv from "dotenv";
 
@@ -10,13 +9,26 @@ export class DatabaseModel {
     private _pool: pkg.Pool;
 
     constructor() {
-        this._pool = new Pool({
-            host:     process.env.DB_HOST,
-            port:     Number(process.env.DB_PORT) || 5432,
-            user:     process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-        });
+        // Se existir uma connection string (ex: DATABASE_URL do Supabase), usa-a diretamente.
+        // Caso contrário, usa as variáveis individuais para testes locais.
+        const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+
+        if (connectionString) {
+            this._pool = new Pool({
+                connectionString,
+                ssl: {
+                    rejectUnauthorized: false // Necessário para conexões seguras externas no Supabase/Render
+                }
+            });
+        } else {
+            this._pool = new Pool({
+                host:     process.env.DB_HOST,
+                port:     Number(process.env.DB_PORT) || 5432,
+                user:     process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_NAME,
+            });
+        }
     }
 
     public async testarConexao(): Promise<boolean> {
