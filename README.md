@@ -8,4 +8,7 @@ Repositório frontend
 - 
 
 Repositório Mobile
-- 
+
+## Acesso de administrador
+
+Defina `ADMIN_EMAIL` no `.env` da API com o e-mail que receberá a função de administrador. Cadastre uma conta com esse e-mail pela tela de cadastro do frontend e faça login; o backend atribui a função ao autenticar esse endereço. Não há conta administrativa ou senha padrão.
