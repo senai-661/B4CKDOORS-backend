@@ -9,15 +9,13 @@ export class DatabaseModel {
     private _pool: pkg.Pool;
 
     constructor() {
-        // Se existir uma connection string (ex: DATABASE_URL do Supabase), usa-a diretamente.
-        // Caso contrário, usa as variáveis individuais para testes locais.
         const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
 
         if (connectionString) {
             this._pool = new Pool({
                 connectionString,
                 ssl: {
-                    rejectUnauthorized: false // Necessário para conexões seguras externas no Supabase/Render
+                    rejectUnauthorized: false
                 }
             });
         } else {
