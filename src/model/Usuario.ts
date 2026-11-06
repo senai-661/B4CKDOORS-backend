@@ -6,6 +6,22 @@ const database = new DatabaseModel().pool;
 
 export class Usuario {
 
+    static async autenticarUsuario(email: string, senha: string): Promise<Omit<UsuarioDTO, "senha"> | null> {
+        const resposta = await database.query(
+            `SELECT id_usuario, nome, email, cpf, senha FROM usuarios WHERE LOWER(email) = LOWER($1)`,
+            [email]
+        );
+        const row = resposta.rows[0];
+        if (!row || row.senha !== senha) return null;
+
+        return {
+            idUsuario: row.id_usuario,
+            nome: row.nome,
+            email: row.email,
+            cpf: row.cpf,
+        };
+    }
+
     static async listarUsuarios(): Promise<UsuarioDTO[] | null> {
         try {
             const resposta = await database.query(`

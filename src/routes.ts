@@ -15,6 +15,7 @@ router.get("/", (req: Request, res: Response) => {
 /**
  * Endpoints para Usuários
  */
+router.post("/api/login",               UsuarioController.login);
 router.get("/api/usuarios",              UsuarioController.todos);
 router.get("/api/usuarios/:idUsuario",   UsuarioController.usuario);
 router.post("/api/usuarios",             UsuarioController.novo);

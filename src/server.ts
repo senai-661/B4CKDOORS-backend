@@ -1,10 +1,14 @@
-import express from "express";
-import cors from "cors";
-import { router } from "./routes.js";
+import { app } from "./app.js";
+import { DatabaseModel } from "./model/DatabaseModel.js";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(router);
+const port = process.env.PORT || 3333;
 
-export const server = app; // <- precisa ser export const
+new DatabaseModel().testarConexao().then((resbd: boolean) => {
+    if (resbd) {
+        app.listen(port, () => {
+            console.log(`🚀 Servidor rodando na porta ${port}`);
+        });
+    } else {
+        console.log("❌ Não foi possível conectar ao banco de dados");
+    }
+});
