@@ -1,6 +1,7 @@
 // src/model/Usuario.ts
 import { DatabaseModel } from "./DatabaseModel.js";
 import type { UsuarioDTO } from "../interface/UsuarioDTO.js";
+import bcrypt from "bcryptjs";
 
 const database = new DatabaseModel().pool;
 
@@ -9,7 +10,7 @@ export class Usuario {
     static async listarUsuarios(): Promise<UsuarioDTO[] | null> {
         try {
             const resposta = await database.query(`
-                SELECT id_usuario, nome, email, cpf, created_at
+                SELECT id_usuario, nome, email, cpf, role, telefone, created_at
                 FROM usuarios ORDER BY nome ASC
             `);
             return resposta.rows.map((row) => ({
@@ -18,6 +19,8 @@ export class Usuario {
                 email:     row.email,
                 cpf:       row.cpf,
                 senha:     "",
+                role:      row.role,
+                telefone:  row.telefone,
             }));
         } catch (error) {
             console.error("[Usuario] Erro ao listar:", error);
@@ -28,11 +31,14 @@ export class Usuario {
     static async buscarUsuario(id: number): Promise<UsuarioDTO | null> {
         try {
             const resposta = await database.query(
-                `SELECT id_usuario, nome, email, cpf FROM usuarios WHERE id_usuario = $1`, [id]
+                `SELECT id_usuario, nome, email, cpf, role, telefone FROM usuarios WHERE id_usuario = $1`, [id]
             );
             if (resposta.rows.length === 0) return null;
             const row = resposta.rows[0];
-            return { idUsuario: row.id_usuario, nome: row.nome, email: row.email, cpf: row.cpf, senha: "" };
+            return {
+                idUsuario: row.id_usuario, nome: row.nome, email: row.email, cpf: row.cpf,
+                senha: "", role: row.role, telefone: row.telefone,
+            };
         } catch (error) {
             console.error("[Usuario] Erro ao buscar:", error);
             return null;
@@ -41,9 +47,11 @@ export class Usuario {
 
     static async cadastrarUsuario(usuario: UsuarioDTO): Promise<boolean> {
         try {
+            const senhaHash = await bcrypt.hash(usuario.senha, 10);
+            // Cadastro público sempre cria clientes; a role "admin" só é atribuída manualmente no banco.
             const resposta = await database.query(
-                `INSERT INTO usuarios (nome, email, cpf, senha) VALUES ($1, $2, $3, $4) RETURNING id_usuario`,
-                [usuario.nome, usuario.email, usuario.cpf, usuario.senha]
+                `INSERT INTO usuarios (nome, email, cpf, senha, role) VALUES ($1, $2, $3, $4, 'cliente') RETURNING id_usuario`,
+                [usuario.nome, usuario.email, usuario.cpf, senhaHash]
             );
             return resposta.rows.length > 0;
         } catch (error) {
@@ -61,6 +69,34 @@ export class Usuario {
             return resposta.rows.length > 0;
         } catch (error) {
             console.error("[Usuario] Erro ao atualizar:", error);
+            return false;
+        }
+    }
+
+    /**
+     * Atualização parcial usada pela tela de perfil (PPerfil): só altera os
+     * campos informados (nome, email, telefone), sem exigir CPF/senha.
+     */
+    static async atualizarPerfil(id: number, dados: Partial<UsuarioDTO>): Promise<boolean> {
+        try {
+            const campos: string[] = [];
+            const valores: unknown[] = [];
+            let i = 1;
+
+            if (dados.nome !== undefined)     { campos.push(`nome = $${i++}`);     valores.push(dados.nome); }
+            if (dados.email !== undefined)    { campos.push(`email = $${i++}`);    valores.push(dados.email); }
+            if (dados.telefone !== undefined) { campos.push(`telefone = $${i++}`); valores.push(dados.telefone); }
+
+            if (campos.length === 0) return true;
+
+            valores.push(id);
+            const resposta = await database.query(
+                `UPDATE usuarios SET ${campos.join(", ")} WHERE id_usuario = $${i} RETURNING id_usuario`,
+                valores
+            );
+            return resposta.rows.length > 0;
+        } catch (error) {
+            console.error("[Usuario] Erro ao atualizar perfil:", error);
             return false;
         }
     }
