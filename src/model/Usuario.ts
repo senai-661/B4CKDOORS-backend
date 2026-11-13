@@ -1,6 +1,7 @@
 // src/model/Usuario.ts
 import { DatabaseModel } from "./DatabaseModel.js";
 import type { UsuarioDTO } from "../interface/UsuarioDTO.js";
+import bcrypt from "bcryptjs";
 
 const database = new DatabaseModel().pool;
 
@@ -41,9 +42,10 @@ export class Usuario {
 
     static async cadastrarUsuario(usuario: UsuarioDTO): Promise<boolean> {
         try {
+            const senhaHash = await bcrypt.hash(usuario.senha, 10);
             const resposta = await database.query(
                 `INSERT INTO usuarios (nome, email, cpf, senha) VALUES ($1, $2, $3, $4) RETURNING id_usuario`,
-                [usuario.nome, usuario.email, usuario.cpf, usuario.senha]
+                [usuario.nome, usuario.email, usuario.cpf, senhaHash]
             );
             return resposta.rows.length > 0;
         } catch (error) {

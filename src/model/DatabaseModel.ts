@@ -1,8 +1,5 @@
-// src/model/DatabaseModel.ts
 import pkg from "pg";
-import dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 const { Pool } = pkg;
 
@@ -35,3 +32,6 @@ export class DatabaseModel {
         return this._pool;
     }
 }
+
+// Exportação padrão para o app.ts reconhecer
+export default DatabaseModel;
