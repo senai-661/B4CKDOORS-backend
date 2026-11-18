@@ -1,8 +1,8 @@
 export interface PedidoDTO {
-    idPedido?: number;
+    idPedido?:  number;
     codPedido?: string;
-    idUsuario: number;
-    dataPedido?: string;
-    valorTotal: number;
-    status?: string;
+    idUsuario:  number;
+    total:      number;
+    status?:    string;
+    createdAt?: Date;
 }
